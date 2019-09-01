@@ -1,3 +1,7 @@
+/******************************************
+* linux substitude to print one character *
+******************************************/
+
 #if LINUX_PUTCH
 #include <stdio.h>
 

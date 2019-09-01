@@ -1,14 +1,19 @@
+/****************************************************
+* handling for whitespace                           *
+* can be 'misused' to tag other chars as whitespace *
+****************************************************/
+
 #include "is_whitespace.h"
 
-int is_whitespace(char c)
+bool is_whitespace(char c)
 {
-	int ret = 0;
+	bool ret = false;
 	int i;
 	static const char seps[] = " \t\r\n";
 
 	for(i = 0; i < sizeof(seps) - 1; i++) {
 		if(c == seps[i]) {
-			ret = 1;
+			ret = true;
 			break;
 		}
 	}

@@ -1,3 +1,7 @@
+/*********************************************************
+* linux substituide to get one character in the terminal *
+*********************************************************/
+
 #if LINUX_GETCH
 #include <termios.h>
 #include <stdio.h>

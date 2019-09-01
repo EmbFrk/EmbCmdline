@@ -1,3 +1,7 @@
+/***************************************
+* implementation of the command 'help' *
+***************************************/
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,8 +9,7 @@
 #include "command_definition.h"
 #include "all_commands.h"
 
-int do_help(int argc, const char *argv[]);
-
+static int do_help(int argc, const char *argv[]);
 static char const help_name[] =	"help";
 static char const help_help[] =	"prints help for commands\r\n" \
 				"accepts a command as parameter\r\n" \
@@ -22,6 +25,8 @@ const struct one_command cmd_help = {
 	.fkt = do_help
 };
 
+/* this command actually doesn't use the parameter mechanism */
+/* wouldn't be a big difference, just an additional function */
 int do_help(int argc, const char *argv[])
 {
 	int i,j, h;
@@ -32,8 +37,12 @@ int do_help(int argc, const char *argv[])
 	maxlen = 0;
 
 	if(argc == 1) {
+		/* no parameter                     */
+		/* --> print all short help strings */
 		printf("list of all commands:\r\n");
 		printf("use \"help <command>\" to get detailed help\r\n");
+
+		/* first search the maximum length of all commands */
 		for(i =  0; i < all_commands_entries; i++) {
 			if(all_commands[i]->help_short != NULL) {
 				j = strlen(all_commands[i]->name) + 1;
@@ -43,6 +52,8 @@ int do_help(int argc, const char *argv[])
 			}
 		}
 		maxlen++;
+
+		/* then print them all */
 		for(i =  0; i < all_commands_entries; i++) {
 			if(all_commands[i]->help_short != NULL) {
 				j = printf("%s", all_commands[i]->name);
@@ -54,6 +65,9 @@ int do_help(int argc, const char *argv[])
 			}
 		}
 	} else if(argc == 2) {
+		/* parameter is the command which help shall be printed */
+
+		/* search the command */
 		for(i =  0; i < all_commands_entries; i++) {
 			c = strlen(argv[1]);
 			j = strlen(all_commands[i]->name);
@@ -64,11 +78,17 @@ int do_help(int argc, const char *argv[])
 				break;
 			}
 		}
+
 		if(i < all_commands_entries) {
-			printf("\"%s\" - ", all_commands[i]->name);
-			printf("%s\r\n", all_commands[i]->help);
+			/* command found */
+			printf("\"%s\" - %s\r\n",
+					all_commands[i]->name,
+					all_commands[i]->help);
 			ls = 0;
 			ll = 0;
+
+			/* calc longes short parameter */
+			/* and longest long paramerer  */
 			for(j = 0; j < all_commands[i]->parameter_amount; j++) {
 				if(all_commands[i]->parameter[j]->par_short != NULL) {
 					h = strlen(all_commands[i]->parameter[j]->par_short);
@@ -83,6 +103,8 @@ int do_help(int argc, const char *argv[])
 					}
 				}
 			}
+
+			/* then print the complete help */
 			for(j = 0; j < all_commands[i]->parameter_amount; j++) {
 				h = 0;
 				if(ls) {
@@ -109,8 +131,6 @@ int do_help(int argc, const char *argv[])
 		} else {
 			printf("%s: unknown command %s\r\n", argv[0], argv[1]);
 		}
-	} else {
-		printf("to many arguments\r\n");
 	}
 
 	return(0);
